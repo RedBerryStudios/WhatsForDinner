@@ -1,38 +1,34 @@
 package com.redberrystudios.whatsfordinner.group;
 
-import com.redberrystudios.whatsfordinner.member.MemberEntity;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupEntity {
 
-  private Long id;
+  private String id;
 
   private String name;
-
-  private String token;
 
   private List<DayEntity> days;
 
   private List<CheckListEntity> checkLists;
 
-  private List<MemberEntity> members;
+  private List<Long> members;
 
-  public GroupEntity(Long id, String name, String token) {
+  public GroupEntity(String id, String name) {
     this.id = id;
     this.name = name;
-    this.token = token;
 
     days = new ArrayList<>();
     checkLists = new ArrayList<>();
     members = new ArrayList<>();
   }
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -42,14 +38,6 @@ public class GroupEntity {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
   }
 
   public List<DayEntity> getDays() {
@@ -68,11 +56,11 @@ public class GroupEntity {
     this.checkLists = checkLists;
   }
 
-  public List<MemberEntity> getMembers() {
+  public List<Long> getMembers() {
     return members;
   }
 
-  public void setMembers(List<MemberEntity> members) {
+  public void setMembers(List<Long> members) {
     this.members = members;
   }
 
@@ -81,7 +69,6 @@ public class GroupEntity {
     return "GroupEntity{" +
         "id=" + id +
         ", name='" + name + '\'' +
-        ", token='" + token + '\'' +
         ", days=" + days +
         ", checkLists=" + checkLists +
         ", members=" + members +

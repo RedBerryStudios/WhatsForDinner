@@ -10,14 +10,14 @@ public class MemberEntity {
 
   private String pictureLink;
 
-  private String token;
+  private String groupId;
 
-  public MemberEntity(long id, String name, String email, String pictureLink, String token) {
+  public MemberEntity(Long id, String name, String email, String pictureLink, String groupId) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.pictureLink = pictureLink;
-    this.token = token;
+    this.groupId = groupId;
   }
 
   public Long getId() {
@@ -52,12 +52,12 @@ public class MemberEntity {
     this.pictureLink = pictureLink;
   }
 
-  public String getToken() {
-    return token;
+  public String getGroupId() {
+    return groupId;
   }
 
-  public void setToken(String token) {
-    this.token = token;
+  public void setGroupId(String groupId) {
+    this.groupId = groupId;
   }
 
   @Override

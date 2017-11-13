@@ -1,6 +1,5 @@
 package com.redberrystudios.whatsfordinner.group;
 
-import com.redberrystudios.whatsfordinner.member.MemberEntity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +11,11 @@ public class BoardElementEntity {
 
   private String label;
 
-  private MemberEntity producer;
+  private Long producer;
 
-  private List<MemberEntity> subscribers;
+  private List<Long> subscribers;
 
-  public BoardElementEntity(Long id, String name, String label, MemberEntity producer) {
+  public BoardElementEntity(Long id, String name, String label, Long producer) {
     this.id = id;
     this.name = name;
     this.label = label;
@@ -49,19 +48,19 @@ public class BoardElementEntity {
     this.label = label;
   }
 
-  public MemberEntity getProducer() {
+  public Long getProducer() {
     return producer;
   }
 
-  public void setProducer(MemberEntity producer) {
+  public void setProducer(Long producer) {
     this.producer = producer;
   }
 
-  public List<MemberEntity> getSubscribers() {
+  public List<Long> getSubscribers() {
     return subscribers;
   }
 
-  public void setSubscribers(List<MemberEntity> subscribers) {
+  public void setSubscribers(List<Long> subscribers) {
     this.subscribers = subscribers;
   }
 }

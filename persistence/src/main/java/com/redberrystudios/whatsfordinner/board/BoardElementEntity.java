@@ -1,4 +1,4 @@
-package com.redberrystudios.whatsfordinner.group;
+package com.redberrystudios.whatsfordinner.board;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +9,19 @@ public class BoardElementEntity {
 
   private String name;
 
-  private String label;
+  private String category;
 
   private Long producer;
 
   private List<Long> subscribers;
 
-  public BoardElementEntity(Long id, String name, String label, Long producer) {
+  public BoardElementEntity() {
+  }
+
+  public BoardElementEntity(Long id, String name, String category, Long producer) {
     this.id = id;
     this.name = name;
-    this.label = label;
+    this.category = category;
     this.producer = producer;
 
     subscribers = new ArrayList<>();
@@ -40,12 +43,12 @@ public class BoardElementEntity {
     this.name = name;
   }
 
-  public String getLabel() {
-    return label;
+  public String getCategory() {
+    return category;
   }
 
-  public void setLabel(String label) {
-    this.label = label;
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public Long getProducer() {
@@ -62,5 +65,16 @@ public class BoardElementEntity {
 
   public void setSubscribers(List<Long> subscribers) {
     this.subscribers = subscribers;
+  }
+
+  @Override
+  public String toString() {
+    return "BoardElementEntity{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", category='" + category + '\'' +
+        ", producer=" + producer +
+        ", subscribers=" + subscribers +
+        '}';
   }
 }

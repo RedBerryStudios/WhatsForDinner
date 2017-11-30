@@ -10,9 +10,12 @@ public class MemberEntity {
 
   private String pictureLink;
 
-  private String groupId;
+  private Long groupId;
 
-  public MemberEntity(Long id, String name, String email, String pictureLink, String groupId) {
+  public MemberEntity() {
+  }
+
+  public MemberEntity(Long id, String name, String email, String pictureLink, Long groupId) {
     this.id = id;
     this.name = name;
     this.email = email;
@@ -52,11 +55,11 @@ public class MemberEntity {
     this.pictureLink = pictureLink;
   }
 
-  public String getGroupId() {
+  public Long getGroupId() {
     return groupId;
   }
 
-  public void setGroupId(String groupId) {
+  public void setGroupId(Long groupId) {
     this.groupId = groupId;
   }
 

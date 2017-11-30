@@ -5,30 +5,35 @@ import java.util.List;
 
 public class GroupEntity {
 
-  private String id;
+  private Long id;
 
   private String name;
 
-  private List<DayEntity> days;
+  private List<Long> days;
 
-  private List<CheckListEntity> checkLists;
+  private List<Long> checklists;
 
   private List<Long> members;
 
-  public GroupEntity(String id, String name) {
+  private String joinToken;
+
+  public GroupEntity() {
+  }
+
+  public GroupEntity(Long id, String name) {
     this.id = id;
     this.name = name;
 
     days = new ArrayList<>();
-    checkLists = new ArrayList<>();
+    checklists = new ArrayList<>();
     members = new ArrayList<>();
   }
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -40,20 +45,20 @@ public class GroupEntity {
     this.name = name;
   }
 
-  public List<DayEntity> getDays() {
+  public List<Long> getDays() {
     return days;
   }
 
-  public void setDays(List<DayEntity> days) {
+  public void setDays(List<Long> days) {
     this.days = days;
   }
 
-  public List<CheckListEntity> getCheckLists() {
-    return checkLists;
+  public List<Long> getChecklists() {
+    return checklists;
   }
 
-  public void setCheckLists(List<CheckListEntity> checkLists) {
-    this.checkLists = checkLists;
+  public void setChecklists(List<Long> checklists) {
+    this.checklists = checklists;
   }
 
   public List<Long> getMembers() {
@@ -64,14 +69,20 @@ public class GroupEntity {
     this.members = members;
   }
 
+  public String getJoinToken() {
+    return joinToken;
+  }
+
+  public void setJoinToken(String joinToken) {
+    this.joinToken = joinToken;
+  }
+
   @Override
   public String toString() {
     return "GroupEntity{" +
         "id=" + id +
         ", name='" + name + '\'' +
-        ", days=" + days +
-        ", checkLists=" + checkLists +
-        ", members=" + members +
+        ", joinToken='" + joinToken + '\'' +
         '}';
   }
 }

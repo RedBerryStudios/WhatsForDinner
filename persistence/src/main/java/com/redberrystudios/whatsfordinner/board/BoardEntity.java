@@ -1,4 +1,4 @@
-package com.redberrystudios.whatsfordinner.group;
+package com.redberrystudios.whatsfordinner.board;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +11,14 @@ public class BoardEntity {
 
   private List<BoardElementEntity> elements;
 
-  private List<String> labels;
+  public BoardEntity() {
+  }
 
   public BoardEntity(Long id, String name) {
     this.id = id;
     this.name = name;
 
     elements = new ArrayList<>();
-    labels = new ArrayList<>();
   }
 
   public Long getId() {
@@ -45,21 +45,12 @@ public class BoardEntity {
     this.elements = elements;
   }
 
-  public List<String> getLabels() {
-    return labels;
-  }
-
-  public void setLabels(List<String> labels) {
-    this.labels = labels;
-  }
-
   @Override
   public String toString() {
     return "BoardEntity{" +
         "id=" + id +
         ", name='" + name + '\'' +
         ", elements=" + elements +
-        ", labels=" + labels +
         '}';
   }
 }

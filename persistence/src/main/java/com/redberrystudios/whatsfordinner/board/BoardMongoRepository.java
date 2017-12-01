@@ -54,13 +54,11 @@ public class BoardMongoRepository extends MongoRepository {
   public BoardEntity findByGroup(Long groupId, Long boardId) {
     GroupEntity groupEntity = groupMongoRepository.find(groupId);
 
-    List<Long> boardIds = groupEntity.getDays()
+    Boolean isValidBoardId = groupEntity.getDays()
         .stream()
-        .map(dayId -> dayMongoRepository.find(dayId).getBoards())
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
+        .anyMatch(dayId -> dayMongoRepository.find(dayId).getBoards().contains(boardId));
 
-    if (boardIds.contains(boardId)) {
+    if (isValidBoardId) {
       return collection.find(eq("_id", boardId)).first();
     } else {
       return null;

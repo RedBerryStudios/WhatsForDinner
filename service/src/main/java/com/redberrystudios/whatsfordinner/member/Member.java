@@ -1,6 +1,6 @@
 package com.redberrystudios.whatsfordinner.member;
 
-public class MemberEntity {
+public class Member {
 
   private Long id;
 
@@ -9,16 +9,6 @@ public class MemberEntity {
   private String email;
 
   private String pictureLink;
-
-  public MemberEntity() {
-  }
-
-  public MemberEntity(Long id, String name, String email, String pictureLink) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.pictureLink = pictureLink;
-  }
 
   public Long getId() {
     return id;
@@ -52,11 +42,4 @@ public class MemberEntity {
     this.pictureLink = pictureLink;
   }
 
-  @Override
-  public String toString() {
-    return "MemberEntity{" +
-        "id=" + id +
-        ", name='" + name + '\'' +
-        '}';
-  }
 }

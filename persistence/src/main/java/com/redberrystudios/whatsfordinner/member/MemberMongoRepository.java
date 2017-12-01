@@ -1,16 +1,19 @@
 package com.redberrystudios.whatsfordinner.member;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
-import java.util.ArrayList;
-import java.util.List;
+import com.redberrystudios.whatsfordinner.group.GroupEntity;
+import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 @Repository
 public class MemberMongoRepository extends MongoRepository {
@@ -19,10 +22,14 @@ public class MemberMongoRepository extends MongoRepository {
 
   private MongoCollection<MemberEntity> collection;
 
+  private GroupMongoRepository groupMongoRepository;
+
   @Autowired
-  public MemberMongoRepository(MongoDatabase db) {
+  public MemberMongoRepository(MongoDatabase db, GroupMongoRepository groupMongoRepository) {
     super(db);
     collection = database.getCollection(COLLECTION_NAME, MemberEntity.class);
+
+    this.groupMongoRepository = groupMongoRepository;
   }
 
   public void save(MemberEntity member) {
@@ -40,11 +47,17 @@ public class MemberMongoRepository extends MongoRepository {
   }
 
   public MemberEntity findByGroup(Long groupId, Long memberId) {
-    return collection.find(and(eq("groupId", groupId),
-        eq("_id", memberId))).first();
+    GroupEntity groupEntity = groupMongoRepository.find(groupId);
+
+    if (groupEntity.getMembers().contains(memberId)) {
+      return collection.find(eq("_id", memberId)).first();
+    } else {
+      return null;
+    }
   }
 
   public List<MemberEntity> findAllByGroup(Long groupId) {
-    return collection.find(eq("groupId", groupId)).into(new ArrayList<>());
+    GroupEntity groupEntity = groupMongoRepository.find(groupId);
+    return collection.find(in("_id", groupEntity.getMembers())).into(new ArrayList<>());
   }
 }

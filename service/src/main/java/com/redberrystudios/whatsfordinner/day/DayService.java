@@ -35,6 +35,14 @@ public class DayService {
         .collect(Collectors.toList());
   }
 
+  public void delete(Day day) {
+    dayMongoRepository.delete(serviceToPersistence(day));
+  }
+
+  public void save(Day day) {
+    dayMongoRepository.save(serviceToPersistence(day));
+  }
+
   private Day persistenceToService(DayEntity dayEntity) {
     Day day = new Day();
 

@@ -36,6 +36,14 @@ public class BoardService {
         .collect(Collectors.toList());
   }
 
+  public void delete(Board board) {
+    boardMongoRepository.delete(serviceToPersistence(board));
+  }
+
+  public void save(Board board) {
+    boardMongoRepository.save(serviceToPersistence(board));
+  }
+
   private Board persistenceToService(BoardEntity boardEntity) {
     Board board = new Board();
 

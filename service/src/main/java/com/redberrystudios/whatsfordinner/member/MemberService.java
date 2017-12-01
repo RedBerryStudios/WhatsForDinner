@@ -1,6 +1,5 @@
 package com.redberrystudios.whatsfordinner.member;
 
-import com.redberrystudios.whatsfordinner.group.Group;
 import com.redberrystudios.whatsfordinner.group.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,14 @@ public class MemberService {
 
   public Member find(Long memberId) {
     return persistenceToService(memberMongoRepository.find(memberId));
+  }
+
+  public void delete(Member member) {
+    memberMongoRepository.delete(serviceToPersistence(member));
+  }
+
+  public void save(Member member) {
+    memberMongoRepository.save(serviceToPersistence(member));
   }
 
   private Member persistenceToService(MemberEntity memberEntity) {

@@ -30,6 +30,14 @@ public class ChecklistService {
         .collect(Collectors.toList());
   }
 
+  public void delete(Checklist checklist) {
+    checklistMongoRepository.delete(serviceToPersistence(checklist));
+  }
+
+  public void save(Checklist checklist) {
+    checklistMongoRepository.save(serviceToPersistence(checklist));
+  }
+
   private Checklist persistenceToService(ChecklistEntity checklistEntity) {
     Checklist checklist = new Checklist();
 

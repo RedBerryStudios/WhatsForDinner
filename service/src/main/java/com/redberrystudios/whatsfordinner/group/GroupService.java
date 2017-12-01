@@ -40,6 +40,14 @@ public class GroupService {
     return persistenceToService(groupMongoRepository.findByJoinToken(joinToken));
   }
 
+  public void delete(Group group) {
+    groupMongoRepository.delete(serviceToPersistence(group));
+  }
+
+  public void save(Group group) {
+    groupMongoRepository.save(serviceToPersistence(group));
+  }
+
   private Group persistenceToService(GroupEntity groupEntity) {
     Group group = new Group();
 

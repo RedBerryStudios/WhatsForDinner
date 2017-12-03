@@ -35,15 +35,19 @@ public class DayService {
         .collect(Collectors.toList());
   }
 
-  public void delete(Day day) {
-    dayMongoRepository.delete(serviceToPersistence(day));
+  public Long delete(Day day) {
+    return dayMongoRepository.delete(serviceToPersistence(day));
   }
 
-  public void save(Day day) {
-    dayMongoRepository.save(serviceToPersistence(day));
+  public Long save(Day day) {
+    return dayMongoRepository.save(serviceToPersistence(day));
   }
 
   private Day persistenceToService(DayEntity dayEntity) {
+    if (dayEntity == null) {
+      return null;
+    }
+
     Day day = new Day();
 
     day.setId(dayEntity.getId());
@@ -58,6 +62,10 @@ public class DayService {
   }
 
   private DayEntity serviceToPersistence(Day day) {
+    if (day == null) {
+      return null;
+    }
+
     DayEntity dayEntity = new DayEntity();
 
     dayEntity.setId(day.getId());

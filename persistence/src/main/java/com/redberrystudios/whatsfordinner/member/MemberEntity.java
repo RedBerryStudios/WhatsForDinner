@@ -1,7 +1,10 @@
 package com.redberrystudios.whatsfordinner.member;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+
 public class MemberEntity {
 
+  @BsonId
   private Long id;
 
   private String name;

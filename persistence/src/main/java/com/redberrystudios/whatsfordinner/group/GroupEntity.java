@@ -1,10 +1,13 @@
 package com.redberrystudios.whatsfordinner.group;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupEntity {
 
+  @BsonId
   private Long id;
 
   private String name;

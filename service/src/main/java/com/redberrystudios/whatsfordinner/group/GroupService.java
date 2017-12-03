@@ -7,6 +7,7 @@ import com.redberrystudios.whatsfordinner.day.DayService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,10 @@ public class GroupService {
   private MemberService memberService;
 
   @Autowired
-  public GroupService(GroupMongoRepository groupMongoRepository, DayService dayService, ChecklistService checklistService, MemberService memberService) {
+  public GroupService(GroupMongoRepository groupMongoRepository,
+                      @Lazy DayService dayService,
+                      @Lazy ChecklistService checklistService,
+                      @Lazy MemberService memberService) {
     this.groupMongoRepository = groupMongoRepository;
     this.dayService = dayService;
     this.checklistService = checklistService;
@@ -40,15 +44,23 @@ public class GroupService {
     return persistenceToService(groupMongoRepository.findByJoinToken(joinToken));
   }
 
-  public void delete(Group group) {
-    groupMongoRepository.delete(serviceToPersistence(group));
+  public Group findByMember(Long memberId) {
+    return persistenceToService(groupMongoRepository.findByMember(memberId));
   }
 
-  public void save(Group group) {
-    groupMongoRepository.save(serviceToPersistence(group));
+  public Long delete(Group group) {
+    return groupMongoRepository.delete(serviceToPersistence(group));
+  }
+
+  public Long save(Group group) {
+    return groupMongoRepository.save(serviceToPersistence(group));
   }
 
   private Group persistenceToService(GroupEntity groupEntity) {
+    if (groupEntity == null) {
+      return null;
+    }
+
     Group group = new Group();
 
     group.setId(groupEntity.getId());
@@ -74,6 +86,10 @@ public class GroupService {
   }
 
   private GroupEntity serviceToPersistence(Group group) {
+    if (group == null) {
+      return null;
+    }
+
     GroupEntity groupEntity = new GroupEntity();
 
     groupEntity.setId(group.getId());

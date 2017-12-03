@@ -30,15 +30,19 @@ public class ChecklistService {
         .collect(Collectors.toList());
   }
 
-  public void delete(Checklist checklist) {
-    checklistMongoRepository.delete(serviceToPersistence(checklist));
+  public Long delete(Checklist checklist) {
+    return checklistMongoRepository.delete(serviceToPersistence(checklist));
   }
 
-  public void save(Checklist checklist) {
-    checklistMongoRepository.save(serviceToPersistence(checklist));
+  public Long save(Checklist checklist) {
+    return checklistMongoRepository.save(serviceToPersistence(checklist));
   }
 
   private Checklist persistenceToService(ChecklistEntity checklistEntity) {
+    if (checklistEntity == null) {
+      return null;
+    }
+
     Checklist checklist = new Checklist();
 
     checklist.setId(checklistEntity.getId());
@@ -53,6 +57,10 @@ public class ChecklistService {
   }
 
   private ChecklistEntity serviceToPersistence(Checklist checklist) {
+    if (checklist == null) {
+      return null;
+    }
+
     ChecklistEntity checklistEntity = new ChecklistEntity();
 
     checklistEntity.setId(checklist.getId());

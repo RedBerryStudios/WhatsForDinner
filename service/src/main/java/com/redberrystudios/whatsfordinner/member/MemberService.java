@@ -1,6 +1,5 @@
 package com.redberrystudios.whatsfordinner.member;
 
-import com.redberrystudios.whatsfordinner.group.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +12,9 @@ public class MemberService {
 
   private MemberMongoRepository memberMongoRepository;
 
-  private GroupService groupService;
-
   @Autowired
-  public MemberService(MemberMongoRepository memberMongoRepository, GroupService groupService) {
+  public MemberService(MemberMongoRepository memberMongoRepository) {
     this.memberMongoRepository = memberMongoRepository;
-    this.groupService = groupService;
   }
 
   public List<Member> findAllByGroup(Long groupId) {
@@ -36,15 +32,23 @@ public class MemberService {
     return persistenceToService(memberMongoRepository.find(memberId));
   }
 
-  public void delete(Member member) {
-    memberMongoRepository.delete(serviceToPersistence(member));
+  public Member findByEmail(String email) {
+    return persistenceToService(memberMongoRepository.findByEmail(email));
   }
 
-  public void save(Member member) {
-    memberMongoRepository.save(serviceToPersistence(member));
+  public Long delete(Member member) {
+    return memberMongoRepository.delete(serviceToPersistence(member));
+  }
+
+  public Long save(Member member) {
+    return memberMongoRepository.save(serviceToPersistence(member));
   }
 
   private Member persistenceToService(MemberEntity memberEntity) {
+    if (memberEntity == null) {
+      return null;
+    }
+
     Member result = new Member();
 
     result.setId(memberEntity.getId());
@@ -56,6 +60,10 @@ public class MemberService {
   }
 
   private MemberEntity serviceToPersistence(Member member) {
+    if (member == null) {
+      return null;
+    }
+
     MemberEntity memberEntity = new MemberEntity();
 
     memberEntity.setId(member.getId());

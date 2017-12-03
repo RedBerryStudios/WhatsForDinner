@@ -36,15 +36,19 @@ public class BoardService {
         .collect(Collectors.toList());
   }
 
-  public void delete(Board board) {
-    boardMongoRepository.delete(serviceToPersistence(board));
+  public Long delete(Board board) {
+    return boardMongoRepository.delete(serviceToPersistence(board));
   }
 
-  public void save(Board board) {
-    boardMongoRepository.save(serviceToPersistence(board));
+  public Long save(Board board) {
+    return boardMongoRepository.save(serviceToPersistence(board));
   }
 
   private Board persistenceToService(BoardEntity boardEntity) {
+    if (boardEntity == null) {
+      return null;
+    }
+
     Board board = new Board();
 
     board.setId(boardEntity.getId());
@@ -64,6 +68,10 @@ public class BoardService {
   }
 
   private BoardEntity serviceToPersistence(Board board) {
+    if (board == null) {
+      return null;
+    }
+
     BoardEntity boardEntity = new BoardEntity();
 
     boardEntity.setId(board.getId());
@@ -72,7 +80,7 @@ public class BoardService {
     List<BoardElementEntity> elements = board.getElements().stream()
         .map(serviceModel -> {
           BoardElementEntity entity = new BoardElementEntity(serviceModel.getId(), serviceModel.getName(), serviceModel.getCategory(), serviceModel.getProducer().getId());
-          entity.getSubscribers().addAll(serviceModel.getSubscribers().stream().map(sub -> sub.getId()).collect(Collectors.toList()));
+          entity.getSubscribers().addAll(serviceModel.getSubscribers().stream().map(Member::getId).collect(Collectors.toList()));
 
           return entity;
         })

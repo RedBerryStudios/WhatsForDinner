@@ -16,6 +16,10 @@
             <groupId>com.redberrystudios</groupId>
             <artifactId>persistence</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

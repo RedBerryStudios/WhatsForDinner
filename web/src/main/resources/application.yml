@@ -1,0 +1,7 @@
+jwt:
+  secret: ExtraSecureJWTSigningKey
+  expiration: 3600
+  header: Authorization
+  route:
+    authentication:
+      path: auth

@@ -83,7 +83,7 @@ public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, L
 
   public List<ChecklistEntity> findAllByGroup(Long groupId) {
     if (groupId == null) {
-      return null;
+      return new ArrayList<>();
     }
 
     GroupEntity groupEntity = groupMongoRepository.find(groupId);

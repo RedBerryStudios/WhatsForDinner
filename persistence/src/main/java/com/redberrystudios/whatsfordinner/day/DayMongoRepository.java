@@ -83,7 +83,7 @@ public class DayMongoRepository extends MongoRepository<DayEntity, Long> {
 
   public List<DayEntity> findAllByGroup(Long groupId) {
     if (groupId == null) {
-      return null;
+      return new ArrayList<>();
     }
 
     GroupEntity groupEntity = groupMongoRepository.find(groupId);

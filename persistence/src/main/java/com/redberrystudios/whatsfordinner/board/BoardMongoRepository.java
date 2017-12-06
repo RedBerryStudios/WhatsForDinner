@@ -91,8 +91,9 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
 
   public List<BoardEntity> findAllByGroup(Long groupId) {
     if (groupId == null) {
-      return null;
+      return new ArrayList<>();
     }
+
     GroupEntity groupEntity = groupMongoRepository.find(groupId);
 
     List<Long> boardIds = groupEntity.getDays()

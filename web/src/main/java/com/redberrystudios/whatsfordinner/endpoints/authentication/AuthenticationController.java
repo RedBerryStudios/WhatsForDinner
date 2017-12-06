@@ -34,7 +34,7 @@ public class AuthenticationController {
     if (member == null) {
       member = new Member();
       member.setEmail(thirdPartyAuthentication.getEmail());
-      member.setName(thirdPartyAuthentication.getEmail());
+      member.setName(thirdPartyAuthentication.getName());
       member.setPictureLink(thirdPartyAuthentication.getProfileImage());
       Long newMemberId = memberService.save(member);
 

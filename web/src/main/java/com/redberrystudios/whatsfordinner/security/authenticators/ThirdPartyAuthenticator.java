@@ -1,9 +1,22 @@
 package com.redberrystudios.whatsfordinner.security.authenticators;
 
-public interface ThirdPartyAuthenticator {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-  ThirdPartyAuthentication authenticate(String authCode);
+@Component
+public abstract class ThirdPartyAuthenticator {
 
-  String getProvider();
+  protected RestTemplate restTemplate;
+
+  @Autowired
+  public ThirdPartyAuthenticator(RestTemplateBuilder restTemplateBuilder) {
+    this.restTemplate = restTemplateBuilder.build();
+  }
+
+  public abstract ThirdPartyAuthentication authenticate(String authCode);
+
+  public abstract String getProvider();
 
 }

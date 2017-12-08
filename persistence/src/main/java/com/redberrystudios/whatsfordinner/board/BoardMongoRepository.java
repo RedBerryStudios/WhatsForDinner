@@ -1,23 +1,21 @@
 package com.redberrystudios.whatsfordinner.board;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.DayElementEntity;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
-import org.bson.BsonValue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
@@ -41,14 +39,21 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
       throw new IllegalArgumentException("BoardEntity to save is null!");
     }
 
-    BsonValue upsertId = collection.replaceOne(eq("_id", board.getId()),
-        board,
-        new UpdateOptions().upsert(true))
-        .getUpsertedId();
+    if (board.getId() == null) {
+      Long id;
+      do {
+        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+      } while (collection.count(eq("_id", id)) > 0);
 
-    if (upsertId != null) {
-      return upsertId.asInt64().getValue();
+      board.setId(id);
+      collection.insertOne(board);
+
+      return id;
+
     } else {
+
+      collection.replaceOne(eq("_id", board.getId()), board);
+
       return board.getId();
     }
   }

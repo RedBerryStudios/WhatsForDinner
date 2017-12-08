@@ -6,6 +6,7 @@ import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
+import org.apache.commons.lang3.RandomUtils;
 import org.bson.BsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -38,14 +39,21 @@ public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, L
       throw new IllegalArgumentException("ChecklistEntity to save is null!");
     }
 
-    BsonValue upsertId = collection.replaceOne(eq("_id", checklist.getId()),
-        checklist,
-        new UpdateOptions().upsert(true))
-        .getUpsertedId();
+    if (checklist.getId() == null) {
+      Long id;
+      do {
+        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+      } while (collection.count(eq("_id", id)) > 0);
 
-    if (upsertId != null) {
-      return upsertId.asInt64().getValue();
+      checklist.setId(id);
+      collection.insertOne(checklist);
+
+      return id;
+
     } else {
+
+      collection.replaceOne(eq("_id", checklist.getId()), checklist);
+
       return checklist.getId();
     }
   }

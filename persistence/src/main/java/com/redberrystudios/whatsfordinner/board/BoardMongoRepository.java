@@ -42,7 +42,7 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
     if (board.getId() == null) {
       Long id;
       do {
-        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+        id = RandomUtils.nextLong(0L,  2L << 52);
       } while (collection.count(eq("_id", id)) > 0);
 
       board.setId(id);

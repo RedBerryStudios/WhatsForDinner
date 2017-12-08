@@ -35,7 +35,7 @@ public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
       Long id;
 
       do {
-        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+        id = RandomUtils.nextLong(0L, 2L << 52);
       } while (collection.count(eq("_id", id)) > 0);
 
       group.setId(id);

@@ -42,7 +42,7 @@ public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, L
     if (checklist.getId() == null) {
       Long id;
       do {
-        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+        id = RandomUtils.nextLong(0L,  2L << 52);
       } while (collection.count(eq("_id", id)) > 0);
 
       checklist.setId(id);

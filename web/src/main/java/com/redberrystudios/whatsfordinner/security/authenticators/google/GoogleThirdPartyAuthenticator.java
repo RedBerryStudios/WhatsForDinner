@@ -5,7 +5,6 @@ import com.redberrystudios.whatsfordinner.security.authenticators.ThirdPartyAuth
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -45,22 +44,23 @@ public class GoogleThirdPartyAuthenticator extends ThirdPartyAuthenticator {
 
     URI googleUserDataUri = null;
     try {
-      googleUserDataUri = new URI("https://www.googleapis.com/plus/v1/people/me?sz=200");
+      googleUserDataUri = new URI("https://www.googleapis.com/plus/v1/people/me");
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
-
-    System.out.println(authConfirmation.getToken_type() + " " + authConfirmation.getAccess_token());
 
     RequestEntity requestEntity = RequestEntity.get(googleUserDataUri)
         .header("Authorization", authConfirmation.getToken_type() + " " + authConfirmation.getAccess_token())
         .build();
 
-    ResponseEntity<GoogleThirdPartyAuthentication> authentication =
-        restTemplate.exchange(requestEntity, GoogleThirdPartyAuthentication.class);
+    GoogleThirdPartyAuthentication googleThirdPartyAuthentication =
+        restTemplate.exchange(requestEntity, GoogleThirdPartyAuthentication.class).getBody();
 
+    String pictureLink = googleThirdPartyAuthentication.getImage().getUrl();
+    pictureLink = pictureLink.replace("?sz=50", "?sz=200");
+    googleThirdPartyAuthentication.getImage().setUrl(pictureLink);
 
-    return authentication.getBody();
+    return googleThirdPartyAuthentication;
   }
 
   @Override

@@ -4,7 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
-import com.redberrystudios.whatsfordinner.day.DayMongoRepository;
+import com.redberrystudios.whatsfordinner.group.DayElementEntity;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
 import org.bson.BsonValue;
@@ -28,15 +28,12 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
 
   private GroupMongoRepository groupMongoRepository;
 
-  private DayMongoRepository dayMongoRepository;
-
   @Autowired
-  public BoardMongoRepository(MongoDatabase db, GroupMongoRepository groupMongoRepository, DayMongoRepository dayMongoRepository) {
+  public BoardMongoRepository(MongoDatabase db, GroupMongoRepository groupMongoRepository) {
     super(db);
     collection = database.getCollection(COLLECTION_NAME, BoardEntity.class);
 
     this.groupMongoRepository = groupMongoRepository;
-    this.dayMongoRepository = dayMongoRepository;
   }
 
   public Long save(BoardEntity board) {
@@ -78,9 +75,8 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
     }
     GroupEntity groupEntity = groupMongoRepository.find(groupId);
 
-    Boolean isValidBoardId = groupEntity.getDays()
-        .stream()
-        .anyMatch(dayId -> dayMongoRepository.find(dayId).getBoards().contains(boardId));
+    Boolean isValidBoardId = groupEntity.getDays().stream()
+        .anyMatch(day -> day.getBoards().contains(boardId));
 
     if (isValidBoardId) {
       return collection.find(eq("_id", boardId)).first();
@@ -96,9 +92,8 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
 
     GroupEntity groupEntity = groupMongoRepository.find(groupId);
 
-    List<Long> boardIds = groupEntity.getDays()
-        .stream()
-        .map(dayId -> dayMongoRepository.find(dayId).getBoards())
+    List<Long> boardIds = groupEntity.getDays().stream()
+        .map(DayElementEntity::getBoards)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
 

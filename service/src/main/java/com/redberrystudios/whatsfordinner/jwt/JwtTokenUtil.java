@@ -28,14 +28,19 @@ public class JwtTokenUtil {
   @Value("${jwt.expiration}")
   private Long expiration;
 
-  private Claims claims;
-
   public Long getUserIdFromToken(String token) {
     return Long.parseLong(getClaimFromToken(token, Claims::getSubject));
   }
 
   public Long getGroupIdFromToken(String token) {
-    return getClaimFromToken(token, (claims) -> claims.get("groupId", Long.class));
+    return getClaimFromToken(token, (claims) -> {
+      String groupId = claims.get("groupId", String.class);
+      if (groupId == null) {
+        return null;
+      } else {
+        return Long.parseLong(groupId);
+      }
+    });
   }
 
   public Date getIssuedAtDateFromToken(String token) {
@@ -51,14 +56,10 @@ public class JwtTokenUtil {
   }
 
   private Claims getAllClaimsFromToken(String token) {
-    if (claims == null) {
-      claims = Jwts.parser()
-          .setSigningKey(secret)
-          .parseClaimsJws(token)
-          .getBody();
-    }
-
-    return claims;
+    return Jwts.parser()
+        .setSigningKey(secret)
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   public String generateToken(Member member) {
@@ -70,7 +71,7 @@ public class JwtTokenUtil {
 
     Group groupForMember = groupService.findByMember(member.getId());
     if (groupForMember != null) {
-      claims.put("groupId", groupForMember.getId());
+      claims.put("groupId", groupForMember.getId().toString());
     }
 
     return doGenerateToken(claims, member.getId().toString());

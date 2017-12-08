@@ -72,4 +72,5 @@ public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
 
     return collection.find(eq("members", memberId)).first();
   }
+
 }

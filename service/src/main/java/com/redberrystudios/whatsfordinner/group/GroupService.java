@@ -1,9 +1,9 @@
 package com.redberrystudios.whatsfordinner.group;
 
+import com.redberrystudios.whatsfordinner.board.Board;
+import com.redberrystudios.whatsfordinner.board.BoardService;
 import com.redberrystudios.whatsfordinner.checklist.Checklist;
 import com.redberrystudios.whatsfordinner.checklist.ChecklistService;
-import com.redberrystudios.whatsfordinner.day.Day;
-import com.redberrystudios.whatsfordinner.day.DayService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +19,21 @@ public class GroupService {
 
   private GroupMongoRepository groupMongoRepository;
 
-  private DayService dayService;
-
   private ChecklistService checklistService;
 
   private MemberService memberService;
 
+  private BoardService boardService;
+
   @Autowired
   public GroupService(GroupMongoRepository groupMongoRepository,
-                      @Lazy DayService dayService,
                       @Lazy ChecklistService checklistService,
-                      @Lazy MemberService memberService) {
+                      @Lazy MemberService memberService,
+                      @Lazy BoardService boardService) {
     this.groupMongoRepository = groupMongoRepository;
-    this.dayService = dayService;
     this.checklistService = checklistService;
     this.memberService = memberService;
+    this.boardService = boardService;
   }
 
   public Group find(Long groupId) {
@@ -72,8 +72,8 @@ public class GroupService {
         .collect(toList());
     group.setMembers(members);
 
-    List<Day> days = groupEntity.getDays().stream()
-        .map(dayService::find)
+    List<DayElement> days = groupEntity.getDays().stream()
+        .map(this::dayPersistenceToService)
         .collect(toList());
     group.setDays(days);
 
@@ -101,10 +101,10 @@ public class GroupService {
         .collect(toList());
     groupEntity.setMembers(memberIds);
 
-    List<Long> dayIds = group.getDays().stream()
-        .map(Day::getId)
+    List<DayElementEntity> days = group.getDays().stream()
+        .map(this::dayServiceToPersistence)
         .collect(toList());
-    groupEntity.setDays(dayIds);
+    groupEntity.setDays(days);
 
     List<Long> checklistIds = group.getChecklists().stream()
         .map(Checklist::getId)
@@ -112,6 +112,30 @@ public class GroupService {
     groupEntity.setChecklists(checklistIds);
 
     return groupEntity;
+  }
+
+  private DayElement dayPersistenceToService(DayElementEntity entity) {
+    DayElement dayElement = new DayElement();
+
+    dayElement.setDate(entity.getDate());
+    dayElement.setBoards(entity.getBoards().stream()
+        .map(boardService::find)
+        .collect(toList())
+    );
+
+    return dayElement;
+  }
+
+  private DayElementEntity dayServiceToPersistence(DayElement dayElement) {
+    DayElementEntity dayElementEntity = new DayElementEntity();
+
+    dayElementEntity.setDate(dayElement.getDate());
+    dayElementEntity.setBoards(dayElement.getBoards().stream()
+        .map(Board::getId)
+        .collect(toList())
+    );
+
+    return dayElementEntity;
   }
 
 }

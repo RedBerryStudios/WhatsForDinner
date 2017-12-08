@@ -1,7 +1,6 @@
 package com.redberrystudios.whatsfordinner.group;
 
 import com.redberrystudios.whatsfordinner.checklist.Checklist;
-import com.redberrystudios.whatsfordinner.day.Day;
 import com.redberrystudios.whatsfordinner.member.Member;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public class Group {
 
   private List<Member> members;
 
-  private List<Day> days;
+  private List<DayElement> days;
 
   private List<Checklist> checklists;
 
@@ -52,11 +51,11 @@ public class Group {
     this.members = members;
   }
 
-  public List<Day> getDays() {
+  public List<DayElement> getDays() {
     return days;
   }
 
-  public void setDays(List<Day> days) {
+  public void setDays(List<DayElement> days) {
     this.days = days;
   }
 

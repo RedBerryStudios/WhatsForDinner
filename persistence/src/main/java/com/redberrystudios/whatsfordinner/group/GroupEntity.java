@@ -12,7 +12,7 @@ public class GroupEntity {
 
   private String name;
 
-  private List<Long> days;
+  private List<DayElementEntity> days;
 
   private List<Long> checklists;
 
@@ -48,11 +48,11 @@ public class GroupEntity {
     this.name = name;
   }
 
-  public List<Long> getDays() {
+  public List<DayElementEntity> getDays() {
     return days;
   }
 
-  public void setDays(List<Long> days) {
+  public void setDays(List<DayElementEntity> days) {
     this.days = days;
   }
 

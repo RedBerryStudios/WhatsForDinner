@@ -1,25 +1,15 @@
-package com.redberrystudios.whatsfordinner.day;
+package com.redberrystudios.whatsfordinner.group;
 
 import com.redberrystudios.whatsfordinner.board.Board;
 
 import java.util.Date;
 import java.util.List;
 
-public class Day {
-
-  private Long id;
+public class DayElement {
 
   private Date date;
 
   private List<Board> boards;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
 
   public Date getDate() {
     return date;

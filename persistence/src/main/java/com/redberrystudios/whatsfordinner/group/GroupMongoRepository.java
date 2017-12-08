@@ -4,6 +4,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.BsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,10 @@ public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
     }
 
     return collection.find(eq("members", memberId)).first();
+  }
+
+  public List<GroupEntity> findAll() {
+    return collection.find().into(new ArrayList<>());
   }
 
 }

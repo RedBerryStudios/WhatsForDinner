@@ -1,21 +1,18 @@
 package com.redberrystudios.whatsfordinner.member;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
-import org.bson.BsonValue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class MemberMongoRepository extends MongoRepository<MemberEntity, Long> {
@@ -39,17 +36,21 @@ public class MemberMongoRepository extends MongoRepository<MemberEntity, Long> {
       throw new IllegalArgumentException("MemberEntity to save is null!");
     }
 
-    if (member.getId() == null)
-      member.setId(UUID.randomUUID().getLeastSignificantBits());
+    if (member.getId() == null) {
+      Long id;
+      do {
+        id = RandomUtils.nextLong(0L, Long.MAX_VALUE);
+      } while (collection.count(eq("_id", id)) > 0);
 
-    BsonValue upsertId = collection.replaceOne(eq("_id", member.getId()),
-        member,
-        new UpdateOptions().upsert(true))
-        .getUpsertedId();
+      member.setId(id);
+      collection.insertOne(member);
 
-    if (upsertId != null) {
-      return upsertId.asInt64().getValue();
+      return id;
+
     } else {
+
+      collection.replaceOne(eq("_id", member.getId()), member);
+
       return member.getId();
     }
   }

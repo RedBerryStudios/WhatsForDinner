@@ -48,6 +48,13 @@ public class GroupService {
     return persistenceToService(groupMongoRepository.findByMember(memberId));
   }
 
+  public List<Group> findAll() {
+    return groupMongoRepository.findAll()
+        .stream()
+        .map(this::persistenceToService)
+        .collect(toList());
+  }
+
   public Long delete(Group group) {
     return groupMongoRepository.delete(serviceToPersistence(group));
   }

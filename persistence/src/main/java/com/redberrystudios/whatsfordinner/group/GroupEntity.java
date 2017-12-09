@@ -1,9 +1,8 @@
 package com.redberrystudios.whatsfordinner.group;
 
-import org.bson.codecs.pojo.annotations.BsonId;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.bson.codecs.pojo.annotations.BsonId;
 
 public class GroupEntity {
 
@@ -21,6 +20,9 @@ public class GroupEntity {
   private String joinToken;
 
   public GroupEntity() {
+    days = new ArrayList<>();
+    checklists = new ArrayList<>();
+    members = new ArrayList<>();
   }
 
   public GroupEntity(Long id, String name) {

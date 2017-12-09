@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,23 +38,9 @@ public class BoardMongoRepository extends MongoRepository<BoardEntity, Long> {
       throw new IllegalArgumentException("BoardEntity to save is null!");
     }
 
-    if (board.getId() == null) {
-      Long id;
-      do {
-        id = RandomUtils.nextLong(0L,  2L << 52);
-      } while (collection.count(eq("_id", id)) > 0);
+    collection.replaceOne(eq("_id", board.getId()), board);
 
-      board.setId(id);
-      collection.insertOne(board);
-
-      return id;
-
-    } else {
-
-      collection.replaceOne(eq("_id", board.getId()), board);
-
-      return board.getId();
-    }
+    return board.getId();
   }
 
   public Long delete(BoardEntity board) {

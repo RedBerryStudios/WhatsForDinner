@@ -12,6 +12,7 @@ public class BoardEntity {
   private List<BoardElementEntity> elements;
 
   public BoardEntity() {
+    elements = new ArrayList<>();
   }
 
   public BoardEntity(Long id, String name) {

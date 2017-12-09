@@ -11,10 +11,12 @@ public class DayElementEntity {
   private List<Long> boards;
 
   public DayElementEntity() {
+    this.boards = new ArrayList<>();
   }
 
   public DayElementEntity(Date date) {
     this.date = date;
+
     this.boards = new ArrayList<>();
   }
 

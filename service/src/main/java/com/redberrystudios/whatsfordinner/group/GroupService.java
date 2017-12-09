@@ -1,18 +1,23 @@
 package com.redberrystudios.whatsfordinner.group;
 
+import static java.util.stream.Collectors.toList;
+
 import com.redberrystudios.whatsfordinner.board.Board;
 import com.redberrystudios.whatsfordinner.board.BoardService;
 import com.redberrystudios.whatsfordinner.checklist.Checklist;
 import com.redberrystudios.whatsfordinner.checklist.ChecklistService;
+import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class GroupService {
@@ -25,15 +30,20 @@ public class GroupService {
 
   private BoardService boardService;
 
+  private IdentifierGeneratorService identifierGeneratorService;
+
   @Autowired
   public GroupService(GroupMongoRepository groupMongoRepository,
-                      @Lazy ChecklistService checklistService,
-                      @Lazy MemberService memberService,
-                      @Lazy BoardService boardService) {
+      @Lazy ChecklistService checklistService,
+      @Lazy MemberService memberService,
+      @Lazy BoardService boardService,
+      IdentifierGeneratorService identifierGeneratorService) {
     this.groupMongoRepository = groupMongoRepository;
     this.checklistService = checklistService;
     this.memberService = memberService;
     this.boardService = boardService;
+    this.identifierGeneratorService = identifierGeneratorService;
+    this.identifierGeneratorService = identifierGeneratorService;
   }
 
   public Group find(Long groupId) {
@@ -60,6 +70,63 @@ public class GroupService {
   }
 
   public Long save(Group group) {
+
+    if (group.getId() == null) {
+
+      Long groupId = identifierGeneratorService
+          .generateLongIdentifier(id -> groupMongoRepository.find(id) != null);
+
+      group.setId(groupId);
+
+      String token = identifierGeneratorService
+          .generateStringIdentifier(
+              joinToken -> groupMongoRepository.findByJoinToken(joinToken) != null);
+
+      group.setJoinToken(token);
+
+      Checklist checklist = new Checklist();
+      Long checklistId = identifierGeneratorService
+          .generateLongIdentifier(id -> checklistService.find(id) != null);
+      checklist.setId(checklistId);
+      checklist.setName("Shopping List");
+
+      checklistService.save(checklist);
+      group.setChecklists(Collections.singletonList(checklist));
+
+      List<DayElement> dayElements = new ArrayList<>();
+      for (int i = -3; i <= 3; i++) {
+        DayElement dayElement = new DayElement();
+
+        LocalDate localDate = LocalDate.now().plusDays(i);
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        dayElement.setDate(date);
+
+        Board board1 = new Board();
+        board1.setName("Lunch");
+        Long boardId1 = identifierGeneratorService
+            .generateLongIdentifier(id -> boardService.find(id) != null);
+        board1.setId(boardId1);
+
+        Board board2 = new Board();
+        board2.setName("Dinner");
+        Long boardId2 = identifierGeneratorService
+            .generateLongIdentifier(id -> boardService.find(id) != null);
+        board2.setId(boardId2);
+
+        boardService.save(board1);
+        boardService.save(board2);
+
+        List<Board> boards = new ArrayList<>();
+        boards.add(board1);
+        boards.add(board2);
+
+        dayElement.setBoards(boards);
+        dayElements.add(dayElement);
+      }
+
+      group.setDays(dayElements);
+    }
+
     return groupMongoRepository.save(serviceToPersistence(group));
   }
 

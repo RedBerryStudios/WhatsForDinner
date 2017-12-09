@@ -1,21 +1,17 @@
 package com.redberrystudios.whatsfordinner.checklist;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
-import org.apache.commons.lang3.RandomUtils;
-import org.bson.BsonValue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, Long> {
@@ -39,23 +35,9 @@ public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, L
       throw new IllegalArgumentException("ChecklistEntity to save is null!");
     }
 
-    if (checklist.getId() == null) {
-      Long id;
-      do {
-        id = RandomUtils.nextLong(0L,  2L << 52);
-      } while (collection.count(eq("_id", id)) > 0);
+    collection.replaceOne(eq("_id", checklist.getId()), checklist);
 
-      checklist.setId(id);
-      collection.insertOne(checklist);
-
-      return id;
-
-    } else {
-
-      collection.replaceOne(eq("_id", checklist.getId()), checklist);
-
-      return checklist.getId();
-    }
+    return checklist.getId();
   }
 
   public Long delete(ChecklistEntity checklist) {

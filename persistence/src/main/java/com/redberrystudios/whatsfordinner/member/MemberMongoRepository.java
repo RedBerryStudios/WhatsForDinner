@@ -10,7 +10,6 @@ import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -36,23 +35,9 @@ public class MemberMongoRepository extends MongoRepository<MemberEntity, Long> {
       throw new IllegalArgumentException("MemberEntity to save is null!");
     }
 
-    if (member.getId() == null) {
-      Long id;
-      do {
-        id = RandomUtils.nextLong(0L,  2L << 52);
-      } while (collection.count(eq("_id", id)) > 0);
+    collection.replaceOne(eq("_id", member.getId()), member);
 
-      member.setId(id);
-      collection.insertOne(member);
-
-      return id;
-
-    } else {
-
-      collection.replaceOne(eq("_id", member.getId()), member);
-
-      return member.getId();
-    }
+    return member.getId();
   }
 
   public Long delete(MemberEntity member) {

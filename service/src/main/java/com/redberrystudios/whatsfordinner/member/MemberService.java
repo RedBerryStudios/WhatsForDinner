@@ -1,20 +1,24 @@
 package com.redberrystudios.whatsfordinner.member;
 
+import static java.util.stream.Collectors.toList;
+
+import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class MemberService {
 
   private MemberMongoRepository memberMongoRepository;
 
+  private IdentifierGeneratorService identifierGeneratorService;
+
   @Autowired
-  public MemberService(MemberMongoRepository memberMongoRepository) {
+  public MemberService(MemberMongoRepository memberMongoRepository,
+      IdentifierGeneratorService identifierGeneratorService) {
     this.memberMongoRepository = memberMongoRepository;
+    this.identifierGeneratorService = identifierGeneratorService;
   }
 
   public List<Member> findAllByGroup(Long groupId) {
@@ -41,6 +45,15 @@ public class MemberService {
   }
 
   public Long save(Member member) {
+
+    if (member.getId() == null) {
+
+      Long id = identifierGeneratorService
+          .generateLongIdentifier(i -> memberMongoRepository.find(i) != null);
+
+      member.setId(id);
+    }
+
     return memberMongoRepository.save(serviceToPersistence(member));
   }
 

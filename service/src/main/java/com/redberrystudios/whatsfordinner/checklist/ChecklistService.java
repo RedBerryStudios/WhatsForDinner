@@ -1,19 +1,23 @@
 package com.redberrystudios.whatsfordinner.checklist;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ChecklistService {
 
   private ChecklistMongoRepository checklistMongoRepository;
 
+  private IdentifierGeneratorService identifierGeneratorService;
+
   @Autowired
-  public ChecklistService(ChecklistMongoRepository checklistMongoRepository) {
+  public ChecklistService(ChecklistMongoRepository checklistMongoRepository,
+      IdentifierGeneratorService identifierGeneratorService) {
     this.checklistMongoRepository = checklistMongoRepository;
+    this.identifierGeneratorService = identifierGeneratorService;
   }
 
   public Checklist find(Long checklistId) {
@@ -35,6 +39,15 @@ public class ChecklistService {
   }
 
   public Long save(Checklist checklist) {
+
+    if (checklist.getId() == null) {
+
+      Long id = identifierGeneratorService
+          .generateLongIdentifier(i -> checklistMongoRepository.find(i) != null);
+
+      checklist.setId(id);
+    }
+
     return checklistMongoRepository.save(serviceToPersistence(checklist));
   }
 
@@ -67,7 +80,8 @@ public class ChecklistService {
     checklistEntity.setName(checklist.getName());
 
     List<ChecklistElementEntity> elements = checklist.getElements().stream()
-        .map(serviceModel -> new ChecklistElementEntity(serviceModel.getId(), serviceModel.getComplete(), serviceModel.getText()))
+        .map(serviceModel -> new ChecklistElementEntity(serviceModel.getId(),
+            serviceModel.getComplete(), serviceModel.getText()))
         .collect(Collectors.toList());
     checklistEntity.setElements(elements);
 

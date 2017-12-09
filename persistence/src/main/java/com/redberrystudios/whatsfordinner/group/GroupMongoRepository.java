@@ -1,17 +1,14 @@
 package com.redberrystudios.whatsfordinner.group;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.RandomUtils;
-import org.bson.BsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import static com.mongodb.client.model.Filters.eq;
 
 @Repository
 public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
@@ -31,24 +28,9 @@ public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
       throw new IllegalArgumentException("GroupEntity to save is null!");
     }
 
-    if (group.getId() == null) {
-      Long id;
+    collection.replaceOne(eq("_id", group.getId()), group);
 
-      do {
-        id = RandomUtils.nextLong(0L, 2L << 52);
-      } while (collection.count(eq("_id", id)) > 0);
-
-      group.setId(id);
-      collection.insertOne(group);
-
-      return id;
-
-    } else {
-
-      collection.replaceOne(eq("_id", group.getId()), group);
-
-      return group.getId();
-    }
+    return group.getId();
   }
 
   public Long delete(GroupEntity group) {

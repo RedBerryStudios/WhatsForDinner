@@ -1,12 +1,12 @@
 package com.redberrystudios.whatsfordinner.board;
 
+import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class BoardService {
@@ -15,10 +15,14 @@ public class BoardService {
 
   private MemberService memberService;
 
+  private IdentifierGeneratorService identifierGeneratorService;
+
   @Autowired
-  public BoardService(BoardMongoRepository boardMongoRepository, MemberService memberService) {
+  public BoardService(BoardMongoRepository boardMongoRepository, MemberService memberService,
+      IdentifierGeneratorService identifierGeneratorService) {
     this.boardMongoRepository = boardMongoRepository;
     this.memberService = memberService;
+    this.identifierGeneratorService = identifierGeneratorService;
   }
 
   public Board find(Long boardId) {
@@ -41,6 +45,15 @@ public class BoardService {
   }
 
   public Long save(Board board) {
+
+    if (board.getId() == null) {
+
+      Long id = identifierGeneratorService
+          .generateLongIdentifier(i -> boardMongoRepository.find(i) != null);
+
+      board.setId(id);
+    }
+
     return boardMongoRepository.save(serviceToPersistence(board));
   }
 
@@ -59,7 +72,8 @@ public class BoardService {
           List<Member> subs = entity.getSubscribers().stream()
               .map(memberService::find)
               .collect(Collectors.toList());
-          return new BoardElement(entity.getId(), entity.getName(), entity.getCategory(), memberService.find(entity.getProducer()), subs);
+          return new BoardElement(entity.getId(), entity.getName(), entity.getCategory(),
+              memberService.find(entity.getProducer()), subs);
         })
         .collect(Collectors.toList());
     board.setElements(elements);
@@ -79,8 +93,11 @@ public class BoardService {
 
     List<BoardElementEntity> elements = board.getElements().stream()
         .map(serviceModel -> {
-          BoardElementEntity entity = new BoardElementEntity(serviceModel.getId(), serviceModel.getName(), serviceModel.getCategory(), serviceModel.getProducer().getId());
-          entity.getSubscribers().addAll(serviceModel.getSubscribers().stream().map(Member::getId).collect(Collectors.toList()));
+          BoardElementEntity entity = new BoardElementEntity(serviceModel.getId(),
+              serviceModel.getName(), serviceModel.getCategory(),
+              serviceModel.getProducer().getId());
+          entity.getSubscribers().addAll(serviceModel.getSubscribers().stream().map(Member::getId)
+              .collect(Collectors.toList()));
 
           return entity;
         })

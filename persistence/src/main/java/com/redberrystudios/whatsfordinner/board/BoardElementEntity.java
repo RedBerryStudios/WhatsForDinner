@@ -16,6 +16,7 @@ public class BoardElementEntity {
   private List<Long> subscribers;
 
   public BoardElementEntity() {
+    subscribers = new ArrayList<>();
   }
 
   public BoardElementEntity(Long id, String name, String category, Long producer) {

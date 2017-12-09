@@ -85,9 +85,6 @@ public class GroupService {
       group.setJoinToken(token);
 
       Checklist checklist = new Checklist();
-      Long checklistId = identifierGeneratorService
-          .generateLongIdentifier(id -> checklistService.find(id) != null);
-      checklist.setId(checklistId);
       checklist.setName("Shopping List");
 
       checklistService.save(checklist);
@@ -103,15 +100,9 @@ public class GroupService {
 
         Board board1 = new Board();
         board1.setName("Lunch");
-        Long boardId1 = identifierGeneratorService
-            .generateLongIdentifier(id -> boardService.find(id) != null);
-        board1.setId(boardId1);
 
         Board board2 = new Board();
         board2.setName("Dinner");
-        Long boardId2 = identifierGeneratorService
-            .generateLongIdentifier(id -> boardService.find(id) != null);
-        board2.setId(boardId2);
 
         boardService.save(board1);
         boardService.save(board2);

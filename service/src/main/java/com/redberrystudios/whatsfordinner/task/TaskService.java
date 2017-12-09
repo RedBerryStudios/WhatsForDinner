@@ -1,6 +1,7 @@
 package com.redberrystudios.whatsfordinner.task;
 
 import com.redberrystudios.whatsfordinner.board.Board;
+import com.redberrystudios.whatsfordinner.board.BoardService;
 import com.redberrystudios.whatsfordinner.group.DayElement;
 import com.redberrystudios.whatsfordinner.group.Group;
 import com.redberrystudios.whatsfordinner.group.GroupService;
@@ -18,14 +19,18 @@ public class TaskService {
 
   private GroupService groupService;
 
+  private BoardService boardService;
+
   @Autowired
-  public TaskService(GroupService groupService) {
+  public TaskService(GroupService groupService,
+      BoardService boardService) {
     this.groupService = groupService;
+    this.boardService = boardService;
   }
 
   @Scheduled(cron = "0 0 23 * * ?")
   public void updateDays() {
-    System.out.println("Triggered!");
+
     for (Group g : groupService.findAll()) {
 
       List<DayElement> newDays = g.getDays();
@@ -37,10 +42,17 @@ public class TaskService {
 
       newDayElement.setDate(getNextDay(lastDay.getDate()));
 
-      List<Board> newBoards = new ArrayList<>(lastDay.getBoards());
+      List<Board> newBoards = new ArrayList<>();
 
-      for(Board b : newBoards){
-        b.getElements().removeAll(b.getElements());
+      for (Board b : lastDay.getBoards()) {
+        String name = b.getName();
+
+        Board board = new Board();
+        board.setName(name);
+
+        boardService.save(board);
+
+        newBoards.add(board);
       }
 
       newDayElement.setBoards(newBoards);

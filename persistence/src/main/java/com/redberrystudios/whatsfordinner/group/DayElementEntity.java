@@ -1,33 +1,23 @@
-package com.redberrystudios.whatsfordinner.day;
+package com.redberrystudios.whatsfordinner.group;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DayEntity {
-
-  private Long id;
+public class DayElementEntity {
 
   private Date date;
 
   private List<Long> boards;
 
-  public DayEntity() {
+  public DayElementEntity() {
+    this.boards = new ArrayList<>();
   }
 
-  public DayEntity(Long id, Date date) {
-    this.id = id;
+  public DayElementEntity(Date date) {
     this.date = date;
 
-    boards = new ArrayList<>();
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+    this.boards = new ArrayList<>();
   }
 
   public Date getDate() {
@@ -48,7 +38,7 @@ public class DayEntity {
 
   @Override
   public String toString() {
-    return "DayEntity{" +
+    return "DayElementEntity{" +
         "date=" + date +
         ", boards=" + boards +
         '}';

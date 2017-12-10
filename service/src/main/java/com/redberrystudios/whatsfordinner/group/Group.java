@@ -1,10 +1,11 @@
 package com.redberrystudios.whatsfordinner.group;
 
 import com.redberrystudios.whatsfordinner.checklist.Checklist;
-import com.redberrystudios.whatsfordinner.day.Day;
 import com.redberrystudios.whatsfordinner.member.Member;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Group {
 
@@ -16,9 +17,15 @@ public class Group {
 
   private List<Member> members;
 
-  private List<Day> days;
+  private List<DayElement> days;
 
   private List<Checklist> checklists;
+
+  public Group() {
+    this.members = new ArrayList<>();
+    this.days = new ArrayList<>();
+    this.checklists = new ArrayList<>();
+  }
 
   public Long getId() {
     return id;
@@ -52,11 +59,11 @@ public class Group {
     this.members = members;
   }
 
-  public List<Day> getDays() {
+  public List<DayElement> getDays() {
     return days;
   }
 
-  public void setDays(List<Day> days) {
+  public void setDays(List<DayElement> days) {
     this.days = days;
   }
 
@@ -68,4 +75,31 @@ public class Group {
     this.checklists = checklists;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Group group = (Group) o;
+    return Objects.equals(id, group.id) &&
+        Objects.equals(name, group.name) &&
+        Objects.equals(joinToken, group.joinToken) &&
+        Objects.equals(members, group.members) &&
+        Objects.equals(days, group.days) &&
+        Objects.equals(checklists, group.checklists);
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hash(id, name, joinToken, members, days, checklists);
+  }
+
+  @Override
+  public String toString() {
+    return "Group{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", joinToken='" + joinToken + '\'' +
+        '}';
+  }
 }

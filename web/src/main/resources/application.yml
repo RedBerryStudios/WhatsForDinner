@@ -1,0 +1,20 @@
+jwt:
+  secret: ExtraSecureJWTSigningKey
+  expiration: 3600
+  header: Authorization
+  route:
+    authentication:
+      path: auth
+
+authenticators:
+  facebook:
+    redirectUri: http://localhost/login/torii/redirect.html
+    clientId: 204469666764169
+    clientSecret: 358566e68d236e84fe9f2404a29046e4
+  google:
+    redirectUri: http://localhost/oauth2callback
+    clientId: 967673291077-avuo2a78dhka1k3ht19l6dblsjn3gsj6.apps.googleusercontent.com
+    clientSecret: lE_QutuZflzDfrSbYHjiGqSY
+
+server:
+  port: 3000

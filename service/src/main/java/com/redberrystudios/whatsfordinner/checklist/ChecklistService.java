@@ -1,5 +1,7 @@
 package com.redberrystudios.whatsfordinner.checklist;
 
+import com.redberrystudios.whatsfordinner.board.BoardElement;
+import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,13 @@ public class ChecklistService {
 
   private ChecklistMongoRepository checklistMongoRepository;
 
+  private IdentifierGeneratorService identifierGeneratorService;
+
   @Autowired
-  public ChecklistService(ChecklistMongoRepository checklistMongoRepository) {
+  public ChecklistService(ChecklistMongoRepository checklistMongoRepository,
+                          IdentifierGeneratorService identifierGeneratorService) {
     this.checklistMongoRepository = checklistMongoRepository;
+    this.identifierGeneratorService = identifierGeneratorService;
   }
 
   public Checklist find(Long checklistId) {
@@ -30,15 +36,44 @@ public class ChecklistService {
         .collect(Collectors.toList());
   }
 
-  public void delete(Checklist checklist) {
-    checklistMongoRepository.delete(serviceToPersistence(checklist));
+  public Long delete(Checklist checklist) {
+    return checklistMongoRepository.delete(serviceToPersistence(checklist));
   }
 
-  public void save(Checklist checklist) {
-    checklistMongoRepository.save(serviceToPersistence(checklist));
+  public Long save(Checklist checklist) {
+
+    if (checklist.getId() == null) {
+
+      Long id = identifierGeneratorService
+          .generateLongIdentifier(i -> checklistMongoRepository.find(i) != null);
+
+      checklist.setId(id);
+    }
+
+    for(ChecklistElement element : checklist.getElements()){
+      if (element.getId() == null) {
+
+        Long elementId = identifierGeneratorService
+            .generateLongIdentifier(i -> {
+              for(ChecklistElement e : checklist.getElements()) {
+                if (e.getId() != null && e.getId().equals(i))
+                  return true;
+              }
+              return false;
+            });
+
+        element.setId(elementId);
+      }
+    }
+
+    return checklistMongoRepository.save(serviceToPersistence(checklist));
   }
 
   private Checklist persistenceToService(ChecklistEntity checklistEntity) {
+    if (checklistEntity == null) {
+      return null;
+    }
+
     Checklist checklist = new Checklist();
 
     checklist.setId(checklistEntity.getId());
@@ -53,13 +88,18 @@ public class ChecklistService {
   }
 
   private ChecklistEntity serviceToPersistence(Checklist checklist) {
+    if (checklist == null) {
+      return null;
+    }
+
     ChecklistEntity checklistEntity = new ChecklistEntity();
 
     checklistEntity.setId(checklist.getId());
     checklistEntity.setName(checklist.getName());
 
     List<ChecklistElementEntity> elements = checklist.getElements().stream()
-        .map(serviceModel -> new ChecklistElementEntity(serviceModel.getId(), serviceModel.getComplete(), serviceModel.getText()))
+        .map(serviceModel -> new ChecklistElementEntity(serviceModel.getId(),
+            serviceModel.getIsComplete(), serviceModel.getText()))
         .collect(Collectors.toList());
     checklistEntity.setElements(elements);
 

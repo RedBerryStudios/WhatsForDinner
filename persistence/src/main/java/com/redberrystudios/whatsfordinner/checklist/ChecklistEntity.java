@@ -12,6 +12,7 @@ public class ChecklistEntity {
   private List<ChecklistElementEntity> elements;
 
   public ChecklistEntity() {
+    elements = new ArrayList<>();
   }
 
   public ChecklistEntity(Long id, String name) {

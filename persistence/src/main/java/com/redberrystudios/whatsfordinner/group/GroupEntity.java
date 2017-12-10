@@ -2,14 +2,16 @@ package com.redberrystudios.whatsfordinner.group;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bson.codecs.pojo.annotations.BsonId;
 
 public class GroupEntity {
 
+  @BsonId
   private Long id;
 
   private String name;
 
-  private List<Long> days;
+  private List<DayElementEntity> days;
 
   private List<Long> checklists;
 
@@ -18,6 +20,9 @@ public class GroupEntity {
   private String joinToken;
 
   public GroupEntity() {
+    days = new ArrayList<>();
+    checklists = new ArrayList<>();
+    members = new ArrayList<>();
   }
 
   public GroupEntity(Long id, String name) {
@@ -45,11 +50,11 @@ public class GroupEntity {
     this.name = name;
   }
 
-  public List<Long> getDays() {
+  public List<DayElementEntity> getDays() {
     return days;
   }
 
-  public void setDays(List<Long> days) {
+  public void setDays(List<DayElementEntity> days) {
     this.days = days;
   }
 

@@ -1,14 +1,16 @@
 package com.redberrystudios.whatsfordinner.group;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Repository
 public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
@@ -28,7 +30,7 @@ public class GroupMongoRepository extends MongoRepository<GroupEntity, Long> {
       throw new IllegalArgumentException("GroupEntity to save is null!");
     }
 
-    collection.replaceOne(eq("_id", group.getId()), group);
+    collection.replaceOne(eq("_id", group.getId()), group, new UpdateOptions().upsert(true));
 
     return group.getId();
   }

@@ -1,20 +1,24 @@
 package com.redberrystudios.whatsfordinner.endpoints.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.redberrystudios.whatsfordinner.jwt.JwtTokenUtil;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
-import com.redberrystudios.whatsfordinner.security.jwt.JwtAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/members")
 public class MemberController {
+
+  private static Logger logger = LoggerFactory.getLogger(MemberController.class);
 
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
@@ -24,18 +28,65 @@ public class MemberController {
 
   @GetMapping
   public MemberResponse getAllMembersForGroup() {
-    JwtAuthenticationToken authenticationToken =
-        (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    String jwt = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+    Long groupId = jwtTokenUtil.getGroupIdFromToken(jwt);
 
-    String jwtToken = (String) authenticationToken.getCredentials();
-
-    Long groupId = jwtTokenUtil.getGroupIdFromToken(jwtToken);
+    logger.info("GET /members | groupId:{}", groupId);
 
     return new MemberResponse(memberService.findAllByGroup(groupId));
   }
 
-  private class MemberResponse {
+  @GetMapping("/{memberId}")
+  public ResponseEntity<?> getMemberWithId(@PathVariable("memberId") Long memberId) {
+    String jwt = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+    Long groupId = jwtTokenUtil.getGroupIdFromToken(jwt);
+    Long tokenMemberId = jwtTokenUtil.getUserIdFromToken(jwt);
+
+    logger.info("GET /members/{} | groupId:{}", memberId, groupId);
+
+    Member member;
+    if (memberId.equals(tokenMemberId)) {
+      member = memberService.find(memberId);
+    } else {
+      member = memberService.findByGroup(groupId, memberId);
+    }
+
+    return new ResponseEntity<>(new MemberResponse(member), HttpStatus.OK);
+  }
+
+  @PutMapping("/{memberId}")
+  public ResponseEntity<?> saveMember(@PathVariable("memberId") Long memberId, @RequestBody MemberResponse memberResponse) {
+    String jwt = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+    Long tokenMemberId = jwtTokenUtil.getUserIdFromToken(jwt);
+
+    if (memberId.equals(tokenMemberId)) {
+      Member member = memberResponse.getMember();
+      member.setId(memberId);
+      logger.info("PUT /members/{} | authorized:true", memberId);
+
+      memberService.save(member);
+
+      return new ResponseEntity<>(new MemberResponse(memberService.find(memberId)), HttpStatus.OK);
+    } else {
+      logger.info("PUT /members/{} | authorized:false");
+
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class MemberResponse {
+
+    private Member member;
+
     private List<Member> members;
+
+    public MemberResponse() {
+    }
+
+    public MemberResponse(Member member) {
+      this.member = member;
+    }
 
     public MemberResponse(List<Member> members) {
       this.members = members;
@@ -43,6 +94,18 @@ public class MemberController {
 
     public List<Member> getMembers() {
       return members;
+    }
+
+    public Member getMember() {
+      return member;
+    }
+
+    public void setMember(Member member) {
+      this.member = member;
+    }
+
+    public void setMembers(List<Member> members) {
+      this.members = members;
     }
   }
 

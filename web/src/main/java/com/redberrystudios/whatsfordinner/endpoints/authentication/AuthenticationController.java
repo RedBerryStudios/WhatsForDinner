@@ -6,6 +6,8 @@ import com.redberrystudios.whatsfordinner.member.MemberService;
 import com.redberrystudios.whatsfordinner.security.authenticators.ThirdPartyAuthentication;
 import com.redberrystudios.whatsfordinner.security.authenticators.ThirdPartyAuthenticatorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,8 +26,7 @@ public class AuthenticationController {
   private ThirdPartyAuthenticatorStore authenticatorStore;
 
   @RequestMapping(path = "/${jwt.route.authentication.path}", method = RequestMethod.POST)
-  public AuthResponse authenticate(@RequestBody AuthenticationRequest authRequest) {
-
+  public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authRequest) {
     ThirdPartyAuthentication thirdPartyAuthentication =
         authenticatorStore.authenticate(authRequest.getProvider(), authRequest.getCode());
 
@@ -43,7 +44,7 @@ public class AuthenticationController {
 
     String jwt = jwtTokenUtil.generateToken(member);
 
-    return new AuthResponse(jwt);
+    return new ResponseEntity<>(new AuthResponse(jwt), HttpStatus.OK);
   }
 
   private class AuthResponse {

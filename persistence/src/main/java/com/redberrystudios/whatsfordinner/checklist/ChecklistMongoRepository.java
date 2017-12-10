@@ -1,17 +1,19 @@
 package com.redberrystudios.whatsfordinner.checklist;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 @Repository
 public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, Long> {
@@ -35,7 +37,7 @@ public class ChecklistMongoRepository extends MongoRepository<ChecklistEntity, L
       throw new IllegalArgumentException("ChecklistEntity to save is null!");
     }
 
-    collection.replaceOne(eq("_id", checklist.getId()), checklist);
+    collection.replaceOne(eq("_id", checklist.getId()), checklist, new UpdateOptions().upsert(true));
 
     return checklist.getId();
   }

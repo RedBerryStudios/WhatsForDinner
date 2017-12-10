@@ -1,7 +1,5 @@
 package com.redberrystudios.whatsfordinner.group;
 
-import static java.util.stream.Collectors.toList;
-
 import com.redberrystudios.whatsfordinner.board.Board;
 import com.redberrystudios.whatsfordinner.board.BoardService;
 import com.redberrystudios.whatsfordinner.checklist.Checklist;
@@ -9,15 +7,18 @@ import com.redberrystudios.whatsfordinner.checklist.ChecklistService;
 import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class GroupService {
@@ -34,10 +35,10 @@ public class GroupService {
 
   @Autowired
   public GroupService(GroupMongoRepository groupMongoRepository,
-      @Lazy ChecklistService checklistService,
-      @Lazy MemberService memberService,
-      @Lazy BoardService boardService,
-      IdentifierGeneratorService identifierGeneratorService) {
+                      @Lazy ChecklistService checklistService,
+                      @Lazy MemberService memberService,
+                      @Lazy BoardService boardService,
+                      IdentifierGeneratorService identifierGeneratorService) {
     this.groupMongoRepository = groupMongoRepository;
     this.checklistService = checklistService;
     this.memberService = memberService;
@@ -47,26 +48,26 @@ public class GroupService {
   }
 
   public Group find(Long groupId) {
-    return persistenceToService(groupMongoRepository.find(groupId));
+    return groupPersistenceToService(groupMongoRepository.find(groupId));
   }
 
   public Group findByJoinToken(String joinToken) {
-    return persistenceToService(groupMongoRepository.findByJoinToken(joinToken));
+    return groupPersistenceToService(groupMongoRepository.findByJoinToken(joinToken));
   }
 
   public Group findByMember(Long memberId) {
-    return persistenceToService(groupMongoRepository.findByMember(memberId));
+    return groupPersistenceToService(groupMongoRepository.findByMember(memberId));
   }
 
   public List<Group> findAll() {
     return groupMongoRepository.findAll()
         .stream()
-        .map(this::persistenceToService)
+        .map(this::groupPersistenceToService)
         .collect(toList());
   }
 
   public Long delete(Group group) {
-    return groupMongoRepository.delete(serviceToPersistence(group));
+    return groupMongoRepository.delete(groupServiceToPersistence(group));
   }
 
   public Long save(Group group) {
@@ -118,10 +119,10 @@ public class GroupService {
       group.setDays(dayElements);
     }
 
-    return groupMongoRepository.save(serviceToPersistence(group));
+    return groupMongoRepository.save(groupServiceToPersistence(group));
   }
 
-  private Group persistenceToService(GroupEntity groupEntity) {
+  private Group groupPersistenceToService(GroupEntity groupEntity) {
     if (groupEntity == null) {
       return null;
     }
@@ -150,7 +151,7 @@ public class GroupService {
     return group;
   }
 
-  private GroupEntity serviceToPersistence(Group group) {
+  private GroupEntity groupServiceToPersistence(Group group) {
     if (group == null) {
       return null;
     }

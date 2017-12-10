@@ -65,10 +65,6 @@ public class JwtTokenUtil {
   public String generateToken(Member member) {
     Map<String, Object> claims = new HashMap<>();
 
-    claims.put("name", member.getName());
-    claims.put("email", member.getEmail());
-    claims.put("image", member.getPictureLink());
-
     Group groupForMember = groupService.findByMember(member.getId());
     if (groupForMember != null) {
       claims.put("groupId", groupForMember.getId().toString());

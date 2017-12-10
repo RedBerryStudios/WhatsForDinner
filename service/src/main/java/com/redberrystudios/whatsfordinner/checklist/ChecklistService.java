@@ -2,10 +2,11 @@ package com.redberrystudios.whatsfordinner.checklist;
 
 import com.redberrystudios.whatsfordinner.board.BoardElement;
 import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChecklistService {
@@ -16,7 +17,7 @@ public class ChecklistService {
 
   @Autowired
   public ChecklistService(ChecklistMongoRepository checklistMongoRepository,
-      IdentifierGeneratorService identifierGeneratorService) {
+                          IdentifierGeneratorService identifierGeneratorService) {
     this.checklistMongoRepository = checklistMongoRepository;
     this.identifierGeneratorService = identifierGeneratorService;
   }
@@ -98,7 +99,7 @@ public class ChecklistService {
 
     List<ChecklistElementEntity> elements = checklist.getElements().stream()
         .map(serviceModel -> new ChecklistElementEntity(serviceModel.getId(),
-            serviceModel.getComplete(), serviceModel.getText()))
+            serviceModel.getIsComplete(), serviceModel.getText()))
         .collect(Collectors.toList());
     checklistEntity.setElements(elements);
 

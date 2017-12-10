@@ -5,6 +5,7 @@ import static com.mongodb.client.model.Filters.in;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import com.redberrystudios.whatsfordinner.MongoRepository;
 import com.redberrystudios.whatsfordinner.group.GroupEntity;
 import com.redberrystudios.whatsfordinner.group.GroupMongoRepository;
@@ -35,7 +36,7 @@ public class MemberMongoRepository extends MongoRepository<MemberEntity, Long> {
       throw new IllegalArgumentException("MemberEntity to save is null!");
     }
 
-    collection.replaceOne(eq("_id", member.getId()), member);
+    collection.replaceOne(eq("_id", member.getId()), member, new UpdateOptions().upsert(true));
 
     return member.getId();
   }

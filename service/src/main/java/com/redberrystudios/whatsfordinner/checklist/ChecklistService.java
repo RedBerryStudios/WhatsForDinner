@@ -1,5 +1,6 @@
 package com.redberrystudios.whatsfordinner.checklist;
 
+import com.redberrystudios.whatsfordinner.board.BoardElement;
 import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +47,22 @@ public class ChecklistService {
           .generateLongIdentifier(i -> checklistMongoRepository.find(i) != null);
 
       checklist.setId(id);
+    }
+
+    for(ChecklistElement element : checklist.getElements()){
+      if (element.getId() == null) {
+
+        Long elementId = identifierGeneratorService
+            .generateLongIdentifier(i -> {
+              for(ChecklistElement e : checklist.getElements()) {
+                if (e.getId().equals(i))
+                  return true;
+              }
+              return false;
+            });
+
+        element.setId(elementId);
+      }
     }
 
     return checklistMongoRepository.save(serviceToPersistence(checklist));

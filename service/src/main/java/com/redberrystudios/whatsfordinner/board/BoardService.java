@@ -4,6 +4,7 @@ import com.redberrystudios.whatsfordinner.generator.IdentifierGeneratorService;
 import com.redberrystudios.whatsfordinner.member.Member;
 import com.redberrystudios.whatsfordinner.member.MemberService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,22 @@ public class BoardService {
           .generateLongIdentifier(i -> boardMongoRepository.find(i) != null);
 
       board.setId(id);
+    }
+
+    for(BoardElement element : board.getElements()){
+      if (element.getId() == null) {
+
+        Long elementId = identifierGeneratorService
+            .generateLongIdentifier(i -> {
+              for(BoardElement e : board.getElements()) {
+                if (e.getId().equals(i))
+                  return true;
+              }
+              return false;
+            });
+
+        element.setId(elementId);
+      }
     }
 
     return boardMongoRepository.save(serviceToPersistence(board));

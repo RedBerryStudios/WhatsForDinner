@@ -55,7 +55,7 @@ public class ChecklistService {
         Long elementId = identifierGeneratorService
             .generateLongIdentifier(i -> {
               for(ChecklistElement e : checklist.getElements()) {
-                if (e.getId().equals(i))
+                if (e.getId() != null && e.getId().equals(i))
                   return true;
               }
               return false;

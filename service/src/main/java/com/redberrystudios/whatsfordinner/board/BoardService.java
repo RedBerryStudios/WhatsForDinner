@@ -61,7 +61,7 @@ public class BoardService {
         Long elementId = identifierGeneratorService
             .generateLongIdentifier(i -> {
               for(BoardElement e : board.getElements()) {
-                if (e.getId().equals(i))
+                if (e.getId() != null && e.getId().equals(i))
                   return true;
               }
               return false;

@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar web/target/*.jar
+web: java -Dserver.port=$PORT -Dserver.mongodb=MONGODB_URI $JAVA_OPTS -jar web/target/*.jar

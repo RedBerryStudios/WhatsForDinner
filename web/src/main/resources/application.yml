@@ -18,3 +18,4 @@ authenticators:
 
 server:
   port: 3000
+  mongodb: mongodb://localhost/whatsfordinner
